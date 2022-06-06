@@ -4,7 +4,7 @@ const player = {
   acceleration: 3,
   breakPower: 1,
   breakInitial: 100,
-  desacceleration: 1,
+  desacceleration: 10,
   bulletSpeed: 300,
   bulletDamage: 10,
 };

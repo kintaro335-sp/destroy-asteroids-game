@@ -71,14 +71,14 @@ player.onUpdate(() => {
   // acelereacion de la nave
   if (player.accelerating) {
     if (Math.abs(player.vel_x) <= playerP.Maxspeed) {
-      const accelX = Math.cos(radians) * playerP.acceleration;
+      const accelX = Math.cos(radians) * playerP.acceleration * 0.6;
       player.vel_x += accelX;
     } else {
       player.vel_x = player.vel_x > 0 ? 100 : -100;
     }
 
     if (Math.abs(player.vel_y) <= playerP.Maxspeed) {
-      const accelY = Math.sin(radians) * playerP.acceleration;
+      const accelY = Math.sin(radians) * playerP.acceleration * 0.6;
       player.vel_y += accelY;
     } else {
       player.vel_y = player.vel_y > 0 ? 100 : -100;
