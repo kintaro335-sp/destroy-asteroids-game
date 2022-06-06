@@ -40,6 +40,7 @@ const player = k.add([
     breakMax: playerP.breakInitial,
     desacceleration: playerP.desacceleration,
     breaking: false,
+    destrtoyed: false,
   },
 ]);
 
@@ -47,8 +48,13 @@ const box = k.add([
   k.rect(100, 100),
   k.pos(500, 300),
   k.area(),
+  k.origin("center"),
   "asteroid",
   k.health(10),
+  {
+    dropable: true,
+    drop: 4,
+  },
 ]);
 
 // updates
@@ -69,7 +75,7 @@ player.onUpdate(() => {
   const { angle } = player;
   const radians = (angle - 90) * (Math.PI / 180);
   // acelereacion de la nave
-  if (player.accelerating) {
+  if (player.accelerating && !player.destrtoyed) {
     if (Math.abs(player.vel_x) <= playerP.Maxspeed) {
       const accelX = Math.cos(radians) * playerP.acceleration * 0.6;
       player.vel_x += accelX;
@@ -85,7 +91,7 @@ player.onUpdate(() => {
     }
   }
   // frenado de la nave
-  if (player.breaking) {
+  if (player.breaking && !player.destrtoyed) {
     if (player.break > 0 && player.speed > 0) {
       if (player.vel_x !== 0) {
         if (player.vel_x < 0) {
@@ -146,8 +152,39 @@ k.onCollide("bullet", "asteroid", (b, e) => {
   e.hurt(1);
 });
 
+function createAsteroid(position, size = 0) {
+  k.add([
+    k.rect(size, size),
+    k.pos(position),
+    k.area(),
+    "asteroid",
+    k.health(size < 50 ? 10 : 5),
+    k.rotate(Math.random() * 360),
+    k.origin("center"),
+    k.move(k.vec2(Math.random() * 100 - 50, Math.random() * 100 - 50), 10),
+    {
+      drop: 4,
+      dropable: size < 50,
+    },
+  ]);
+}
+
 k.on("death", "asteroid", (e) => {
   e.destroy();
+  if (e.dropable) {
+    for (let i = 0; i < box.drop; i++) {
+      createAsteroid(e.pos, 50);
+    }
+  }
+});
+
+k.onCollide("player", "asteroid", (p, e) => {
+  p.hidden = true;
+  p.destrtoyed = true;
+  player.vel_x = 0;
+  player.vel_y = 0;
+  player.angle = 0;
+  e.hurt(2);
 });
 
 // constrolls
@@ -180,6 +217,12 @@ k.onKeyRelease("s", () => {
 
 k.onKeyDown("s", () => {
   player.breaking = true;
+});
+
+k.onKeyPress("r", () => {
+  player.hidden = false;
+  player.destrtoyed = false;
+  player.pos = k.vec2(300, 300);
 });
 
 function spawnBullet() {
