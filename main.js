@@ -25,7 +25,7 @@ const breakLabel = k.add([
 const player = k.add([
   k.sprite("player", { width: 90, height: 90 }),
   k.pos(300, 300),
-  k.area({ scale: 1, height: 80, width: 80 }),
+  k.area({ scale: 1, height: 70, width: 70 }),
   k.rotate(0),
   k.origin("center"),
   k.body(),
@@ -119,7 +119,7 @@ player.onUpdate(() => {
     }
   }
   // friccion de la nave
-  if (player.vel_x !== 0) {
+  if (player.vel_x !== 0 && !player.accelerating) {
     if (player.vel_x > 0) {
       player.vel_x -= 0.03 * player.desacceleration;
     } else {
@@ -220,9 +220,12 @@ k.onKeyDown("s", () => {
 });
 
 k.onKeyPress("r", () => {
-  player.hidden = false;
-  player.destrtoyed = false;
-  player.pos = k.vec2(300, 300);
+  if (player.destrtoyed) {
+    player.hidden = false;
+    player.destrtoyed = false;
+    player.angle = 0;
+    player.pos = k.vec2(300, 300);
+  }
 });
 
 function spawnBullet() {
@@ -270,5 +273,7 @@ function spawnBullet() {
 }
 
 k.onKeyPress("space", () => {
-  spawnBullet();
+  if (!player.destrtoyed) {
+    spawnBullet();
+  }
 });
