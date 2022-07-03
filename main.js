@@ -97,9 +97,9 @@ player.onUpdate(() => {
     } else {
       const des = 0.1;
       if (player.vel_y > 0) {
-        player.vel_y += des;
-      } else {
         player.vel_y -= des;
+      } else {
+        player.vel_y += des;
       }
     }
   }
