@@ -76,18 +76,31 @@ player.onUpdate(() => {
   const radians = (angle - 90) * (Math.PI / 180);
   // acelereacion de la nave
   if (player.accelerating && !player.destrtoyed) {
-    if (Math.abs(player.vel_x) <= playerP.Maxspeed) {
+    const max_x_speed = Math.abs(Math.cos(radians) * playerP.Maxspeed);
+    const max_y_speed = Math.abs(Math.sin(radians) * playerP.Maxspeed);
+
+    if (Math.abs(player.vel_x) <= max_x_speed) {
       const accelX = Math.cos(radians) * playerP.acceleration * 0.6;
       player.vel_x += accelX;
     } else {
-      player.vel_x = player.vel_x > 0 ? 100 : -100;
+      const des = 0.1;
+      if (player.vel_x > 0) {
+        player.vel_x -= des;
+      } else {
+        player.vel_x += des;
+      }
     }
 
-    if (Math.abs(player.vel_y) <= playerP.Maxspeed) {
+    if (Math.abs(player.vel_y) <= max_y_speed) {
       const accelY = Math.sin(radians) * playerP.acceleration * 0.6;
       player.vel_y += accelY;
     } else {
-      player.vel_y = player.vel_y > 0 ? 100 : -100;
+      const des = 0.1;
+      if (player.vel_y > 0) {
+        player.vel_y += des;
+      } else {
+        player.vel_y -= des;
+      }
     }
   }
   // frenado de la nave
@@ -119,7 +132,7 @@ player.onUpdate(() => {
     }
   }
   // friccion de la nave
-  if (player.vel_x !== 0 && !player.accelerating) {
+  if (player.vel_x !== 0) {
     if (player.vel_x > 0) {
       player.vel_x -= 0.03 * player.desacceleration;
     } else {
